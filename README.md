@@ -2,6 +2,8 @@ A package for dealing with SMPTE timecode.
 
 It is primarily based on https://www.npmjs.com/package/timecode
 
+[![Godoc](http://img.shields.io/badge/godoc-reference-blue.svg?style=flat)](http://godoc.org/github.com/agorman/go-timecode)
+
 ```
 frameRate := 29.97
 dropFrame := true
