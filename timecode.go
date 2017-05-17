@@ -7,9 +7,7 @@ import (
 	"strings"
 )
 
-/*
- * Timecode object for manipulating SMPTE timecodes
- */
+// Timecode is an object for manipulating SMPTE timecodes
 type Timecode struct {
 	frameRate    float64
 	intFrameRate int
@@ -18,11 +16,8 @@ type Timecode struct {
 	tcRegexp     *regexp.Regexp
 }
 
-/*
- * Create a new timecode
- *
- * Takes the frame rate and a bool which flags it as using drop frame encoding
- */
+// NewTimecode returns a new Timecode.
+// It takes the frame rate and a bool which flags it as using drop frame encoding
 func NewTimecode(rate float64, drop bool) *Timecode {
 	tcRegexp := regexp.MustCompile(`^(\d\d)[:;](\d\d)[:;](\d\d)[:;](\d+)$`)
 
@@ -35,20 +30,14 @@ func NewTimecode(rate float64, drop bool) *Timecode {
 	}
 }
 
-/*
- * Resets the timecode to 0
- */
+// Resets sets the timecode to 0
 func (tc *Timecode) Reset() {
 	tc.frameCount = 0
 
 	return
 }
 
-/*
- * Add a SMPTE timecode to the timecode
- *
- * Takes timecode strings non-drop 'hh:mm:ss:ff', drop 'hh:mm:ss;ff', or milliseconds 'hh:mm:ss:mmm'
- */
+// AddString adds SMPTE strings in the following formats: timecode strings non-drop 'hh:mm:ss:ff', drop 'hh:mm:ss;ff', or milliseconds 'hh:mm:ss:mmm'
 func (tc *Timecode) AddString(t string) error {
 	frames, err := tc.timecodeToFrames(t)
 	if err != nil {
@@ -60,32 +49,22 @@ func (tc *Timecode) AddString(t string) error {
 	return nil
 }
 
-/*
- * Add seconds to the timecode
- */
+// AddSeconds add seconds to the timecode
 func (tc *Timecode) AddSeconds(seconds float64) {
 	tc.frameCount += int(float64(tc.intFrameRate)*seconds + 0.5)
 }
 
-/*
- * Add frames to the timecode
- */
+// AddFrames add frames to the timecode
 func (tc *Timecode) AddFrames(frames int) {
 	tc.frameCount += frames
 }
 
-/*
- * Add another Timecode object to the timecode
- */
+// Add adds another Timecode object to the timecode
 func (tc *Timecode) Add(t *Timecode) {
 	tc.frameCount += t.frameCount
 }
 
-/*
- * Subtract a SMPTE timecode from the timecode
- *
- * Takes timecode strings non-drop 'hh:mm:ss:ff', drop 'hh:mm:ss;ff', or milliseconds 'hh:mm:ss:mmm'
- */
+// SubString subtract SMPTE strings timecode strings non-drop 'hh:mm:ss:ff', drop 'hh:mm:ss;ff', or milliseconds 'hh:mm:ss:mmm'
 func (tc *Timecode) SubString(t string) error {
 	frames, err := tc.timecodeToFrames(t)
 	if err != nil {
@@ -97,30 +76,22 @@ func (tc *Timecode) SubString(t string) error {
 	return nil
 }
 
-/*
- * Subtract seconds from the timecode
- */
+// SubSeconds subtract seconds from the timecode
 func (tc *Timecode) SubSeconds(seconds float64) {
 	tc.frameCount -= int(float64(tc.intFrameRate)*seconds + 0.5)
 }
 
-/*
- * Subtract frames from the timecode
- */
+// SubFrames subtract frames from the timecode
 func (tc *Timecode) SubFrames(frames int) {
 	tc.frameCount -= frames
 }
 
-/*
- * Subtract another Timecode object from the timecode
- */
+// Subtract subtracts another Timecode object from the timecode
 func (tc *Timecode) Sub(t *Timecode) {
 	tc.frameCount -= t.frameCount
 }
 
-/*
- * Return a SMTPE timecode string
- */
+// String returns a SMTPE timecode string
 func (tc *Timecode) String() string {
 	return tc.framesToTimecode(tc.frameCount)
 }
