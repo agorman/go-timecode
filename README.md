@@ -9,7 +9,13 @@ dropFrame := true
 tc := timecode.NewTimecode(frameRate, dropFrame)
 tc.AddSeconds(10.5)
 tc.AddFrames(20)
+tc.AddString("05:01:20;18")
 tc.SubSeconds(1)
 
-fmt.Println(tc) // 00:00:10;05
+tc2 := timecode.NewTimecode(frameRate, dropFrame)
+tc.AddString("05:01:20;18")
+
+tc.Add(tc2)
+
+fmt.Println(tc) // 05:01:30;23
 ```
