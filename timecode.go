@@ -18,16 +18,21 @@ type Timecode struct {
 
 // NewTimecode returns a new Timecode.
 // It takes the frame rate and a bool which flags it as using drop frame encoding
-func NewTimecode(rate float64, drop bool) *Timecode {
+func NewTimecode(rate float64, drop bool) (*Timecode, error) {
 	tcRegexp := regexp.MustCompile(`^(\d\d)[:;](\d\d)[:;](\d\d)[:;](\d+)$`)
+
+	intFrameRate := int(rate + 0.5)
+	if intFrameRate <= 0 {
+		return nil, fmt.Errorf("Unsupported frame rate")
+	}
 
 	return &Timecode{
 		frameRate:    rate,
-		intFrameRate: int(rate + 0.5),
+		intFrameRate: intFrameRate,
 		dropFrame:    drop,
 		frameCount:   0,
 		tcRegexp:     tcRegexp,
-	}
+	}, nil
 }
 
 // Resets sets the timecode to 0
