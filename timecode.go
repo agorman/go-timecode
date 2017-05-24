@@ -35,6 +35,22 @@ func NewTimecode(rate float64, drop bool) (*Timecode, error) {
 	}, nil
 }
 
+func (tc *Timecode) SetFrameRate(rate float64) error {
+	intFrameRate := int(rate + 0.5)
+	if intFrameRate <= 0 {
+		return fmt.Errorf("Unsupported frame rate")
+	}
+
+	tc.frameRate = rate
+	tc.intFrameRate = intFrameRate
+
+	return nil
+}
+
+func (tc *Timecode) SetDropFrame(drop bool) {
+	tc.dropFrame = drop
+}
+
 // Resets sets the timecode to 0
 func (tc *Timecode) Reset() {
 	tc.frameCount = 0
@@ -55,18 +71,24 @@ func (tc *Timecode) AddString(t string) error {
 }
 
 // AddSeconds add seconds to the timecode
-func (tc *Timecode) AddSeconds(seconds float64) {
+func (tc *Timecode) AddSeconds(seconds float64) *Timecode {
 	tc.frameCount += int(float64(tc.intFrameRate)*seconds + 0.5)
+
+	return tc
 }
 
 // AddFrames add frames to the timecode
-func (tc *Timecode) AddFrames(frames int) {
+func (tc *Timecode) AddFrames(frames int) *Timecode {
 	tc.frameCount += frames
+
+	return tc
 }
 
 // Add adds another Timecode object to the timecode
-func (tc *Timecode) Add(t *Timecode) {
+func (tc *Timecode) Add(t *Timecode) *Timecode {
 	tc.frameCount += t.frameCount
+
+	return tc
 }
 
 // SubString subtract SMPTE strings timecode strings non-drop 'hh:mm:ss:ff', drop 'hh:mm:ss;ff', or milliseconds 'hh:mm:ss:mmm'
@@ -82,18 +104,24 @@ func (tc *Timecode) SubString(t string) error {
 }
 
 // SubSeconds subtract seconds from the timecode
-func (tc *Timecode) SubSeconds(seconds float64) {
+func (tc *Timecode) SubSeconds(seconds float64) *Timecode {
 	tc.frameCount -= int(float64(tc.intFrameRate)*seconds + 0.5)
+
+	return tc
 }
 
 // SubFrames subtract frames from the timecode
-func (tc *Timecode) SubFrames(frames int) {
+func (tc *Timecode) SubFrames(frames int) *Timecode {
 	tc.frameCount -= frames
+
+	return tc
 }
 
 // Subtract subtracts another Timecode object from the timecode
-func (tc *Timecode) Sub(t *Timecode) {
+func (tc *Timecode) Sub(t *Timecode) *Timecode {
 	tc.frameCount -= t.frameCount
+
+	return tc
 }
 
 // String returns a SMTPE timecode string
