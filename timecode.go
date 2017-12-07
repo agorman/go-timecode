@@ -19,7 +19,7 @@ type Timecode struct {
 // NewTimecode returns a new Timecode.
 // It takes the frame rate and a bool which flags it as using drop frame encoding
 func NewTimecode(rate float64, drop bool) (*Timecode, error) {
-	tcRegexp := regexp.MustCompile(`^(\d\d)[:;](\d\d)[:;](\d\d)[:;](\d+)$`)
+	tcRegexp := regexp.MustCompile(`^(\d\d):(\d\d):(\d\d)[.:,;](\d+)$`)
 
 	intFrameRate := int(rate + 0.5)
 	if intFrameRate <= 0 {
@@ -198,7 +198,7 @@ func (tc *Timecode) timecodeToFrames(t string) (int, error) {
 	minutes, _ = strconv.ParseFloat(t[3:5], 32)
 	seconds, _ = strconv.ParseFloat(t[6:8], 32)
 
-	if strings.Contains(t, `;`) {
+	if strings.Contains(t, `;`) || strings.Contains(t, `,`) {
 		dropFrames := int(tc.frameRate*0.066666 + 0.5)
 		hourFrames := tc.intFrameRate * 60 * 60
 		minuteFrames := tc.intFrameRate * 60
