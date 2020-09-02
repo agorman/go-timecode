@@ -124,6 +124,11 @@ func (tc *Timecode) Sub(t *Timecode) *Timecode {
 	return tc
 }
 
+// ToSeconds returns the timecode in seconds
+func (tc *Timecode) ToSeconds() float64 {
+	return float64(tc.frameCount) / tc.frameRate
+}
+
 // String returns a SMTPE timecode string
 func (tc *Timecode) String() string {
 	return tc.framesToTimecode(tc.frameCount)
