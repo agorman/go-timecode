@@ -35,6 +35,7 @@ func NewTimecode(rate float64, drop bool) (*Timecode, error) {
 	}, nil
 }
 
+// SetFrameRate sets the timecode's frame rate
 func (tc *Timecode) SetFrameRate(rate float64) error {
 	intFrameRate := int(rate + 0.5)
 	if intFrameRate <= 0 {
@@ -47,6 +48,7 @@ func (tc *Timecode) SetFrameRate(rate float64) error {
 	return nil
 }
 
+// SetDropFrame toggles the SMTPE drop frame encoding
 func (tc *Timecode) SetDropFrame(drop bool) {
 	tc.dropFrame = drop
 }
@@ -54,8 +56,6 @@ func (tc *Timecode) SetDropFrame(drop bool) {
 // Resets sets the timecode to 0
 func (tc *Timecode) Reset() {
 	tc.frameCount = 0
-
-	return
 }
 
 // AddString adds SMPTE strings in the following formats: timecode strings non-drop 'hh:mm:ss:ff', drop 'hh:mm:ss;ff', or milliseconds 'hh:mm:ss:mmm'
@@ -84,7 +84,7 @@ func (tc *Timecode) AddFrames(frames int) *Timecode {
 	return tc
 }
 
-// Add adds another Timecode object to the timecode
+// Add adds another Timecode object to the timecode.
 func (tc *Timecode) Add(t *Timecode) *Timecode {
 	tc.frameCount += t.frameCount
 
