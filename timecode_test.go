@@ -6,6 +6,52 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestFrameRateTimecode(t *testing.T) {
+	t.Parallel()
+
+	_, err := NewTimecode(-1, false)
+	assert.NotNil(t, err)
+
+	tc, err := NewTimecode(30, false)
+	assert.Nil(t, err)
+
+	err = tc.SetFrameRate(-5)
+	assert.NotNil(t, err)
+
+	tc, err = NewTimecode(30, false)
+	assert.Nil(t, err)
+
+	err = tc.SetFrameRate(0)
+	assert.NotNil(t, err)
+}
+
+func TestResetTimecode(t *testing.T) {
+	t.Parallel()
+
+	tc, err := NewTimecode(30, false)
+	assert.Nil(t, err)
+
+	tc.AddSeconds(90)
+	assert.Equal(t, 90.0, tc.ToSeconds())
+
+	tc.Reset()
+	assert.Equal(t, 0.0, tc.ToSeconds())
+	assert.Equal(t, "00:00:00:00", tc.String())
+}
+
+func TestStringTimecode(t *testing.T) {
+	t.Parallel()
+
+	tc, err := NewTimecode(30, false)
+	assert.Nil(t, err)
+
+	err = tc.AddString("00:asdf:123")
+	assert.NotNil(t, err)
+
+	err = tc.SubString("1:2:3:4")
+	assert.NotNil(t, err)
+}
+
 func TestAddTimecode(t *testing.T) {
 	t.Parallel()
 
@@ -33,11 +79,13 @@ func TestAddTimecode(t *testing.T) {
 	assert.Equal(t, "01:04:13:25", tc.String())
 	assert.Equal(t, 3853.8333333333335, tc.ToSeconds())
 
-	tc.AddString("01:02:03:04")
+	err = tc.AddString("01:02:03:04")
+	assert.Nil(t, err)
 	assert.Equal(t, "02:06:16:29", tc.String())
 	assert.Equal(t, 7576.966666666666, tc.ToSeconds())
 
-	tc.AddString("00:55:45:02")
+	err = tc.AddString("00:55:45:02")
+	assert.Nil(t, err)
 	assert.Equal(t, "03:02:02:01", tc.String())
 	assert.Equal(t, 10922.033333333333, tc.ToSeconds())
 
@@ -62,7 +110,8 @@ func TestSubTimecode(t *testing.T) {
 	tc, err := NewTimecode(frameRate, dropFrame)
 	assert.Nil(t, err)
 
-	tc.AddString("01:01:01:00")
+	err = tc.AddString("01:01:01:00")
+	assert.Nil(t, err)
 	assert.Equal(t, "01:01:01:00", tc.String())
 	assert.Equal(t, 3661.0, tc.ToSeconds())
 
@@ -82,8 +131,17 @@ func TestSubTimecode(t *testing.T) {
 	assert.Equal(t, "00:46:47:05", tc.String())
 	assert.Equal(t, 2807.1666666666665, tc.ToSeconds())
 
-	tc.SubString("00:30:03:04")
+	err = tc.SubString("00:30:03:04")
+	assert.Nil(t, err)
 	assert.Equal(t, "00:16:44:01", tc.String())
+	assert.Equal(t, 1004.0333333333333, tc.ToSeconds())
+
+	frameRate2 := 25.0
+	dropFrame2 := false
+	tc2, err := NewTimecode(frameRate2, dropFrame2)
+	assert.Nil(t, err)
+
+	tc.Sub(tc2)
 	assert.Equal(t, 1004.0333333333333, tc.ToSeconds())
 }
 
@@ -103,6 +161,14 @@ func TestDropFrameTimecode(t *testing.T) {
 	assert.Equal(t, 90.09009009009009, tc.ToSeconds())
 
 	tc.SubSeconds(89)
+	assert.Equal(t, "00:00:01;00", tc.String())
+	assert.Equal(t, 1.001001001001001, tc.ToSeconds())
+
+	tc.SetDropFrame(false)
+	assert.Equal(t, "00:00:01:00", tc.String())
+	assert.Equal(t, 1.001001001001001, tc.ToSeconds())
+
+	tc.SetDropFrame(true)
 	assert.Equal(t, "00:00:01;00", tc.String())
 	assert.Equal(t, 1.001001001001001, tc.ToSeconds())
 }
