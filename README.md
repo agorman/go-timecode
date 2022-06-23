@@ -1,8 +1,11 @@
+[![Build Status](https://github.com/agorman/go-timecode/workflows/go-timecode-ci/badge.svg)](https://github.com/agorman/go-timecode/actions)
+[![go report card](https://goreportcard.com/badge/github.com/agorman/go-timecode "go report card")](https://goreportcard.com/report/github.com/agorman/go-timecode)
+[![GoDoc](https://godoc.org/github.com/agorman/go-timecode?status.svg)](https://godoc.org/github.com/agorman/go-timecode)
+[![codecov](https://codecov.io/gh/agorman/go-timecode/branch/master/graph/badge.svg)](https://codecov.io/gh/agorman/go-timecode)
+
 A package for dealing with SMPTE timecode.
 
 It is primarily based on https://www.npmjs.com/package/timecode
-
-[![Godoc](http://img.shields.io/badge/godoc-reference-blue.svg?style=flat)](http://godoc.org/github.com/agorman/go-timecode)
 
 ```
 frameRate := 29.97
