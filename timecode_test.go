@@ -6,169 +6,525 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestFrameRateTimecode(t *testing.T) {
+func TestParse(t *testing.T) {
 	t.Parallel()
 
-	_, err := NewTimecode(-1, false)
+	tc, err := Parse(R30, "00:00:10:00")
+	assert.Nil(t, err)
+	assert.Equal(t, "00:00:10:00", tc.String())
+	assert.Equal(t, uint64(300), tc.Frames())
+	assert.Equal(t, 10.0, tc.Seconds())
+	assert.Equal(t, uint64(0), tc.Hour())
+	assert.Equal(t, uint64(0), tc.Minute())
+	assert.Equal(t, uint64(10), tc.Second())
+	assert.Equal(t, uint64(0), tc.Frame())
+
+	tc, err = Parse(R30, "123:00:10:00")
+	assert.Nil(t, err)
+	assert.Equal(t, "123:00:10:00", tc.String())
+	assert.Equal(t, uint64(13284300), tc.Frames())
+	assert.Equal(t, 442810.0, tc.Seconds())
+	assert.Equal(t, uint64(123), tc.Hour())
+	assert.Equal(t, uint64(0), tc.Minute())
+	assert.Equal(t, uint64(10), tc.Second())
+	assert.Equal(t, uint64(0), tc.Frame())
+
+	tc, err = Parse(R30, "01:30:12:15")
+	assert.Nil(t, err)
+	assert.Equal(t, "01:30:12:15", tc.String())
+	assert.Equal(t, uint64(162375), tc.Frames())
+	assert.Equal(t, 5412.5, tc.Seconds())
+	assert.Equal(t, uint64(1), tc.Hour())
+	assert.Equal(t, uint64(30), tc.Minute())
+	assert.Equal(t, uint64(12), tc.Second())
+	assert.Equal(t, uint64(15), tc.Frame())
+
+	tc, err = Parse(R2997DF, "01:30:12;15")
+	assert.Nil(t, err)
+	assert.Equal(t, "01:30:12;15", tc.String())
+	assert.Equal(t, uint64(162213), tc.Frames())
+	assert.Equal(t, 5407.1, tc.Seconds())
+	assert.Equal(t, uint64(1), tc.Hour())
+	assert.Equal(t, uint64(30), tc.Minute())
+	assert.Equal(t, uint64(12), tc.Second())
+	assert.Equal(t, uint64(15), tc.Frame())
+
+	tc, err = Parse(R2997, "01:30:12:15")
+	assert.Nil(t, err)
+	assert.Equal(t, "01:30:12:15", tc.String())
+	assert.Equal(t, uint64(162375), tc.Frames())
+	assert.Equal(t, 5412.5, tc.Seconds())
+	assert.Equal(t, uint64(1), tc.Hour())
+	assert.Equal(t, uint64(30), tc.Minute())
+	assert.Equal(t, uint64(12), tc.Second())
+	assert.Equal(t, uint64(15), tc.Frame())
+
+	tc, err = Parse(R5994DF, "01:30:12;15")
+	assert.Nil(t, err)
+	assert.Equal(t, "01:30:12;15", tc.String())
+	assert.Equal(t, uint64(324411), tc.Frames())
+	assert.Equal(t, 5406.85, tc.Seconds())
+	assert.Equal(t, uint64(1), tc.Hour())
+	assert.Equal(t, uint64(30), tc.Minute())
+	assert.Equal(t, uint64(12), tc.Second())
+	assert.Equal(t, uint64(15), tc.Frame())
+
+	tc, err = Parse(R5994, "01:30:12:15")
+	assert.Nil(t, err)
+	assert.Equal(t, "01:30:12:15", tc.String())
+	assert.Equal(t, uint64(324735), tc.Frames())
+	assert.Equal(t, 5412.25, tc.Seconds())
+	assert.Equal(t, uint64(1), tc.Hour())
+	assert.Equal(t, uint64(30), tc.Minute())
+	assert.Equal(t, uint64(12), tc.Second())
+	assert.Equal(t, uint64(15), tc.Frame())
+
+	tc, err = Parse(R2398, "01:30:12:15")
+	assert.Nil(t, err)
+	assert.Equal(t, "01:30:12:15", tc.String())
+	assert.Equal(t, uint64(129903), tc.Frames())
+	assert.Equal(t, 5412.625, tc.Seconds())
+	assert.Equal(t, uint64(1), tc.Hour())
+	assert.Equal(t, uint64(30), tc.Minute())
+	assert.Equal(t, uint64(12), tc.Second())
+	assert.Equal(t, uint64(15), tc.Frame())
+
+	tc, err = Parse(R24, "01:30:12:15")
+	assert.Nil(t, err)
+	assert.Equal(t, "01:30:12:15", tc.String())
+	assert.Equal(t, uint64(129903), tc.Frames())
+	assert.Equal(t, 5412.625, tc.Seconds())
+	assert.Equal(t, uint64(1), tc.Hour())
+	assert.Equal(t, uint64(30), tc.Minute())
+	assert.Equal(t, uint64(12), tc.Second())
+	assert.Equal(t, uint64(15), tc.Frame())
+
+	tc, err = Parse(R25, "01:30:12:15")
+	assert.Nil(t, err)
+	assert.Equal(t, "01:30:12:15", tc.String())
+	assert.Equal(t, uint64(135315), tc.Frames())
+	assert.Equal(t, 5412.6, tc.Seconds())
+	assert.Equal(t, uint64(1), tc.Hour())
+	assert.Equal(t, uint64(30), tc.Minute())
+	assert.Equal(t, uint64(12), tc.Second())
+	assert.Equal(t, uint64(15), tc.Frame())
+
+	tc, err = Parse(R50, "01:30:12:15")
+	assert.Nil(t, err)
+	assert.Equal(t, "01:30:12:15", tc.String())
+	assert.Equal(t, uint64(270615), tc.Frames())
+	assert.Equal(t, 5412.3, tc.Seconds())
+	assert.Equal(t, uint64(1), tc.Hour())
+	assert.Equal(t, uint64(30), tc.Minute())
+	assert.Equal(t, uint64(12), tc.Second())
+	assert.Equal(t, uint64(15), tc.Frame())
+
+	tc, err = Parse(R60, "01:30:12:15")
+	assert.Nil(t, err)
+	assert.Equal(t, "01:30:12:15", tc.String())
+	assert.Equal(t, uint64(324735), tc.Frames())
+	assert.Equal(t, 5412.25, tc.Seconds())
+	assert.Equal(t, uint64(1), tc.Hour())
+	assert.Equal(t, uint64(30), tc.Minute())
+	assert.Equal(t, uint64(12), tc.Second())
+	assert.Equal(t, uint64(15), tc.Frame())
+
+	tc, err = Parse(R120, "01:30:12:15")
+	assert.Nil(t, err)
+	assert.Equal(t, "01:30:12:15", tc.String())
+	assert.Equal(t, uint64(649455), tc.Frames())
+	assert.Equal(t, 5412.125, tc.Seconds())
+	assert.Equal(t, uint64(1), tc.Hour())
+	assert.Equal(t, uint64(30), tc.Minute())
+	assert.Equal(t, uint64(12), tc.Second())
+	assert.Equal(t, uint64(15), tc.Frame())
+
+	tc, err = Parse(R240, "01:30:12:15")
+	assert.Nil(t, err)
+	assert.Equal(t, "01:30:12:15", tc.String())
+	assert.Equal(t, uint64(1298895), tc.Frames())
+	assert.Equal(t, 5412.0625, tc.Seconds())
+	assert.Equal(t, uint64(1), tc.Hour())
+	assert.Equal(t, uint64(30), tc.Minute())
+	assert.Equal(t, uint64(12), tc.Second())
+	assert.Equal(t, uint64(15), tc.Frame())
+}
+
+func TestFromFrames(t *testing.T) {
+	t.Parallel()
+
+	tc := FromFrames(R30, 300)
+	assert.Equal(t, "00:00:10:00", tc.String())
+	assert.Equal(t, uint64(300), tc.Frames())
+	assert.Equal(t, 10.0, tc.Seconds())
+	assert.Equal(t, uint64(0), tc.Hour())
+	assert.Equal(t, uint64(0), tc.Minute())
+	assert.Equal(t, uint64(10), tc.Second())
+	assert.Equal(t, uint64(0), tc.Frame())
+
+	tc = FromFrames(R30, 13284300)
+	assert.Equal(t, "123:00:10:00", tc.String())
+	assert.Equal(t, uint64(13284300), tc.Frames())
+	assert.Equal(t, 442810.0, tc.Seconds())
+	assert.Equal(t, uint64(123), tc.Hour())
+	assert.Equal(t, uint64(0), tc.Minute())
+	assert.Equal(t, uint64(10), tc.Second())
+	assert.Equal(t, uint64(0), tc.Frame())
+
+	tc = FromFrames(R30, 162375)
+	assert.Equal(t, "01:30:12:15", tc.String())
+	assert.Equal(t, uint64(162375), tc.Frames())
+	assert.Equal(t, 5412.5, tc.Seconds())
+	assert.Equal(t, uint64(1), tc.Hour())
+	assert.Equal(t, uint64(30), tc.Minute())
+	assert.Equal(t, uint64(12), tc.Second())
+	assert.Equal(t, uint64(15), tc.Frame())
+
+	tc = FromFrames(R2997DF, 162213)
+	assert.Equal(t, "01:30:12;15", tc.String())
+	assert.Equal(t, uint64(162213), tc.Frames())
+	assert.Equal(t, 5407.1, tc.Seconds())
+	assert.Equal(t, uint64(1), tc.Hour())
+	assert.Equal(t, uint64(30), tc.Minute())
+	assert.Equal(t, uint64(12), tc.Second())
+	assert.Equal(t, uint64(15), tc.Frame())
+
+	tc = FromFrames(R2997, 162375)
+	assert.Equal(t, "01:30:12:15", tc.String())
+	assert.Equal(t, uint64(162375), tc.Frames())
+	assert.Equal(t, 5412.5, tc.Seconds())
+	assert.Equal(t, uint64(1), tc.Hour())
+	assert.Equal(t, uint64(30), tc.Minute())
+	assert.Equal(t, uint64(12), tc.Second())
+	assert.Equal(t, uint64(15), tc.Frame())
+
+	tc = FromFrames(R5994DF, 324411)
+	assert.Equal(t, "01:30:12;15", tc.String())
+	assert.Equal(t, uint64(324411), tc.Frames())
+	assert.Equal(t, 5406.85, tc.Seconds())
+	assert.Equal(t, uint64(1), tc.Hour())
+	assert.Equal(t, uint64(30), tc.Minute())
+	assert.Equal(t, uint64(12), tc.Second())
+	assert.Equal(t, uint64(15), tc.Frame())
+
+	tc = FromFrames(R5994, 324735)
+	assert.Equal(t, "01:30:12:15", tc.String())
+	assert.Equal(t, uint64(324735), tc.Frames())
+	assert.Equal(t, 5412.25, tc.Seconds())
+	assert.Equal(t, uint64(1), tc.Hour())
+	assert.Equal(t, uint64(30), tc.Minute())
+	assert.Equal(t, uint64(12), tc.Second())
+	assert.Equal(t, uint64(15), tc.Frame())
+
+	tc = FromFrames(R2398, 129903)
+	assert.Equal(t, "01:30:12:15", tc.String())
+	assert.Equal(t, uint64(129903), tc.Frames())
+	assert.Equal(t, 5412.625, tc.Seconds())
+	assert.Equal(t, uint64(1), tc.Hour())
+	assert.Equal(t, uint64(30), tc.Minute())
+	assert.Equal(t, uint64(12), tc.Second())
+	assert.Equal(t, uint64(15), tc.Frame())
+
+	tc = FromFrames(R24, 129903)
+	assert.Equal(t, "01:30:12:15", tc.String())
+	assert.Equal(t, uint64(129903), tc.Frames())
+	assert.Equal(t, 5412.625, tc.Seconds())
+	assert.Equal(t, uint64(1), tc.Hour())
+	assert.Equal(t, uint64(30), tc.Minute())
+	assert.Equal(t, uint64(12), tc.Second())
+	assert.Equal(t, uint64(15), tc.Frame())
+
+	tc = FromFrames(R25, 135315)
+	assert.Equal(t, "01:30:12:15", tc.String())
+	assert.Equal(t, uint64(135315), tc.Frames())
+	assert.Equal(t, 5412.6, tc.Seconds())
+	assert.Equal(t, uint64(1), tc.Hour())
+	assert.Equal(t, uint64(30), tc.Minute())
+	assert.Equal(t, uint64(12), tc.Second())
+	assert.Equal(t, uint64(15), tc.Frame())
+
+	tc = FromFrames(R50, 270615)
+	assert.Equal(t, "01:30:12:15", tc.String())
+	assert.Equal(t, uint64(270615), tc.Frames())
+	assert.Equal(t, 5412.3, tc.Seconds())
+	assert.Equal(t, uint64(1), tc.Hour())
+	assert.Equal(t, uint64(30), tc.Minute())
+	assert.Equal(t, uint64(12), tc.Second())
+	assert.Equal(t, uint64(15), tc.Frame())
+
+	tc = FromFrames(R60, 324735)
+	assert.Equal(t, "01:30:12:15", tc.String())
+	assert.Equal(t, uint64(324735), tc.Frames())
+	assert.Equal(t, 5412.25, tc.Seconds())
+	assert.Equal(t, uint64(1), tc.Hour())
+	assert.Equal(t, uint64(30), tc.Minute())
+	assert.Equal(t, uint64(12), tc.Second())
+	assert.Equal(t, uint64(15), tc.Frame())
+
+	tc = FromFrames(R120, 649455)
+	assert.Equal(t, "01:30:12:15", tc.String())
+	assert.Equal(t, uint64(649455), tc.Frames())
+	assert.Equal(t, 5412.125, tc.Seconds())
+	assert.Equal(t, uint64(1), tc.Hour())
+	assert.Equal(t, uint64(30), tc.Minute())
+	assert.Equal(t, uint64(12), tc.Second())
+	assert.Equal(t, uint64(15), tc.Frame())
+
+	tc = FromFrames(R240, 1298895)
+	assert.Equal(t, "01:30:12:15", tc.String())
+	assert.Equal(t, uint64(1298895), tc.Frames())
+	assert.Equal(t, 5412.0625, tc.Seconds())
+	assert.Equal(t, uint64(1), tc.Hour())
+	assert.Equal(t, uint64(30), tc.Minute())
+	assert.Equal(t, uint64(12), tc.Second())
+	assert.Equal(t, uint64(15), tc.Frame())
+}
+
+func TestFromSeconds(t *testing.T) {
+	t.Parallel()
+
+	tc, err := FromSeconds(R30, 10.0)
+	assert.Nil(t, err)
+	assert.Equal(t, "00:00:10:00", tc.String())
+	assert.Equal(t, uint64(300), tc.Frames())
+	assert.Equal(t, 10.0, tc.Seconds())
+	assert.Equal(t, uint64(0), tc.Hour())
+	assert.Equal(t, uint64(0), tc.Minute())
+	assert.Equal(t, uint64(10), tc.Second())
+	assert.Equal(t, uint64(0), tc.Frame())
+
+	tc, err = FromSeconds(R30, 442810.0)
+	assert.Nil(t, err)
+	assert.Equal(t, "123:00:10:00", tc.String())
+	assert.Equal(t, uint64(13284300), tc.Frames())
+	assert.Equal(t, 442810.0, tc.Seconds())
+	assert.Equal(t, uint64(123), tc.Hour())
+	assert.Equal(t, uint64(0), tc.Minute())
+	assert.Equal(t, uint64(10), tc.Second())
+	assert.Equal(t, uint64(0), tc.Frame())
+
+	tc, err = FromSeconds(R30, 5412.5)
+	assert.Nil(t, err)
+	assert.Equal(t, "01:30:12:15", tc.String())
+	assert.Equal(t, uint64(162375), tc.Frames())
+	assert.Equal(t, 5412.5, tc.Seconds())
+	assert.Equal(t, uint64(1), tc.Hour())
+	assert.Equal(t, uint64(30), tc.Minute())
+	assert.Equal(t, uint64(12), tc.Second())
+	assert.Equal(t, uint64(15), tc.Frame())
+
+	tc, err = FromSeconds(R2997DF, 5407.1)
+	assert.Nil(t, err)
+	assert.Equal(t, "01:30:12;15", tc.String())
+	assert.Equal(t, uint64(162213), tc.Frames())
+	assert.Equal(t, 5407.1, tc.Seconds())
+	assert.Equal(t, uint64(1), tc.Hour())
+	assert.Equal(t, uint64(30), tc.Minute())
+	assert.Equal(t, uint64(12), tc.Second())
+	assert.Equal(t, uint64(15), tc.Frame())
+
+	tc, err = FromSeconds(R2997, 5412.5)
+	assert.Nil(t, err)
+	assert.Equal(t, "01:30:12:15", tc.String())
+	assert.Equal(t, uint64(162375), tc.Frames())
+	assert.Equal(t, 5412.5, tc.Seconds())
+	assert.Equal(t, uint64(1), tc.Hour())
+	assert.Equal(t, uint64(30), tc.Minute())
+	assert.Equal(t, uint64(12), tc.Second())
+	assert.Equal(t, uint64(15), tc.Frame())
+
+	tc, err = FromSeconds(R5994DF, 5406.85)
+	assert.Nil(t, err)
+	assert.Equal(t, "01:30:12;15", tc.String())
+	assert.Equal(t, uint64(324411), tc.Frames())
+	assert.Equal(t, 5406.85, tc.Seconds())
+	assert.Equal(t, uint64(1), tc.Hour())
+	assert.Equal(t, uint64(30), tc.Minute())
+	assert.Equal(t, uint64(12), tc.Second())
+	assert.Equal(t, uint64(15), tc.Frame())
+
+	tc, err = FromSeconds(R5994, 5412.25)
+	assert.Nil(t, err)
+	assert.Equal(t, "01:30:12:15", tc.String())
+	assert.Equal(t, uint64(324735), tc.Frames())
+	assert.Equal(t, 5412.25, tc.Seconds())
+	assert.Equal(t, uint64(1), tc.Hour())
+	assert.Equal(t, uint64(30), tc.Minute())
+	assert.Equal(t, uint64(12), tc.Second())
+	assert.Equal(t, uint64(15), tc.Frame())
+
+	tc, err = FromSeconds(R2398, 5412.625)
+	assert.Nil(t, err)
+	assert.Equal(t, "01:30:12:15", tc.String())
+	assert.Equal(t, uint64(129903), tc.Frames())
+	assert.Equal(t, 5412.625, tc.Seconds())
+	assert.Equal(t, uint64(1), tc.Hour())
+	assert.Equal(t, uint64(30), tc.Minute())
+	assert.Equal(t, uint64(12), tc.Second())
+	assert.Equal(t, uint64(15), tc.Frame())
+
+	tc, err = FromSeconds(R24, 5412.625)
+	assert.Nil(t, err)
+	assert.Equal(t, "01:30:12:15", tc.String())
+	assert.Equal(t, uint64(129903), tc.Frames())
+	assert.Equal(t, 5412.625, tc.Seconds())
+	assert.Equal(t, uint64(1), tc.Hour())
+	assert.Equal(t, uint64(30), tc.Minute())
+	assert.Equal(t, uint64(12), tc.Second())
+	assert.Equal(t, uint64(15), tc.Frame())
+
+	tc, err = FromSeconds(R25, 5412.6)
+	assert.Nil(t, err)
+	assert.Equal(t, "01:30:12:15", tc.String())
+	assert.Equal(t, uint64(135315), tc.Frames())
+	assert.Equal(t, 5412.6, tc.Seconds())
+	assert.Equal(t, uint64(1), tc.Hour())
+	assert.Equal(t, uint64(30), tc.Minute())
+	assert.Equal(t, uint64(12), tc.Second())
+	assert.Equal(t, uint64(15), tc.Frame())
+
+	tc, err = FromSeconds(R50, 5412.3)
+	assert.Nil(t, err)
+	assert.Equal(t, "01:30:12:15", tc.String())
+	assert.Equal(t, uint64(270615), tc.Frames())
+	assert.Equal(t, 5412.3, tc.Seconds())
+	assert.Equal(t, uint64(1), tc.Hour())
+	assert.Equal(t, uint64(30), tc.Minute())
+	assert.Equal(t, uint64(12), tc.Second())
+	assert.Equal(t, uint64(15), tc.Frame())
+
+	tc, err = FromSeconds(R60, 5412.25)
+	assert.Nil(t, err)
+	assert.Equal(t, "01:30:12:15", tc.String())
+	assert.Equal(t, uint64(324735), tc.Frames())
+	assert.Equal(t, 5412.25, tc.Seconds())
+	assert.Equal(t, uint64(1), tc.Hour())
+	assert.Equal(t, uint64(30), tc.Minute())
+	assert.Equal(t, uint64(12), tc.Second())
+	assert.Equal(t, uint64(15), tc.Frame())
+
+	tc, err = FromSeconds(R120, 5412.125)
+	assert.Nil(t, err)
+	assert.Equal(t, "01:30:12:15", tc.String())
+	assert.Equal(t, uint64(649455), tc.Frames())
+	assert.Equal(t, 5412.125, tc.Seconds())
+	assert.Equal(t, uint64(1), tc.Hour())
+	assert.Equal(t, uint64(30), tc.Minute())
+	assert.Equal(t, uint64(12), tc.Second())
+	assert.Equal(t, uint64(15), tc.Frame())
+
+	tc, err = FromSeconds(R240, 5412.0625)
+	assert.Nil(t, err)
+	assert.Equal(t, "01:30:12:15", tc.String())
+	assert.Equal(t, uint64(1298895), tc.Frames())
+	assert.Equal(t, 5412.0625, tc.Seconds())
+	assert.Equal(t, uint64(1), tc.Hour())
+	assert.Equal(t, uint64(30), tc.Minute())
+	assert.Equal(t, uint64(12), tc.Second())
+	assert.Equal(t, uint64(15), tc.Frame())
+}
+
+func TestInvalidTimecodes(t *testing.T) {
+	_, err := Parse(R30, "0:0:0:0")
 	assert.NotNil(t, err)
 
-	tc, err := NewTimecode(30, false)
-	assert.Nil(t, err)
-
-	err = tc.SetFrameRate(-5)
+	_, err = Parse(R30, "00:60:00:00")
 	assert.NotNil(t, err)
 
-	tc, err = NewTimecode(30, false)
-	assert.Nil(t, err)
+	_, err = Parse(R30, "00:00:60:00")
+	assert.NotNil(t, err)
 
-	err = tc.SetFrameRate(0)
+	_, err = Parse(R30, "00:00:00:30")
+	assert.NotNil(t, err)
+
+	_, err = Parse(R30, "not a timecode")
+	assert.NotNil(t, err)
+
+	_, err = Parse(R30, "-10:00:00:00")
+	assert.NotNil(t, err)
+
+	_, err = Parse(R30, "00:00:00:0.123")
 	assert.NotNil(t, err)
 }
 
-func TestResetTimecode(t *testing.T) {
-	t.Parallel()
-
-	tc, err := NewTimecode(30, false)
-	assert.Nil(t, err)
-
-	tc.AddSeconds(90)
-	assert.Equal(t, 90.0, tc.ToSeconds())
-
-	tc.Reset()
-	assert.Equal(t, 0.0, tc.ToSeconds())
-	assert.Equal(t, "00:00:00:00", tc.String())
-}
-
-func TestStringTimecode(t *testing.T) {
-	t.Parallel()
-
-	tc, err := NewTimecode(30, false)
-	assert.Nil(t, err)
-
-	err = tc.AddString("00:asdf:123")
-	assert.NotNil(t, err)
-
-	err = tc.SubString("1:2:3:4")
+func TestInvalidSeconds(t *testing.T) {
+	_, err := FromSeconds(R30, -1.0)
 	assert.NotNil(t, err)
 }
 
-func TestAddTimecode(t *testing.T) {
-	t.Parallel()
-
-	frameRate := 30.0
-	dropFrame := false
-
-	tc, err := NewTimecode(frameRate, dropFrame)
+func TestTimecodeSeparators(t *testing.T) {
+	_, err := Parse(R30, "00:00:00:00")
 	assert.Nil(t, err)
-	assert.Equal(t, "00:00:00:00", tc.String())
-	assert.Equal(t, 0.0, tc.ToSeconds())
 
-	tc.AddSeconds(90)
-	assert.Equal(t, "00:01:30:00", tc.String())
-	assert.Equal(t, 90.0, tc.ToSeconds())
-
-	tc.AddSeconds(3760)
-	assert.Equal(t, "01:04:10:00", tc.String())
-	assert.Equal(t, 3850.0, tc.ToSeconds())
-
-	tc.AddFrames(15)
-	assert.Equal(t, "01:04:10:15", tc.String())
-	assert.Equal(t, 3850.5, tc.ToSeconds())
-
-	tc.AddFrames(100)
-	assert.Equal(t, "01:04:13:25", tc.String())
-	assert.Equal(t, 3853.8333333333335, tc.ToSeconds())
-
-	err = tc.AddString("01:02:03:04")
+	_, err = Parse(R30, "00:00:00;00")
 	assert.Nil(t, err)
-	assert.Equal(t, "02:06:16:29", tc.String())
-	assert.Equal(t, 7576.966666666666, tc.ToSeconds())
 
-	err = tc.AddString("00:55:45:02")
+	_, err = Parse(R30, "00:00:00.00")
 	assert.Nil(t, err)
-	assert.Equal(t, "03:02:02:01", tc.String())
-	assert.Equal(t, 10922.033333333333, tc.ToSeconds())
 
-	frameRate2 := 25.0
-	dropFrame2 := false
-	tc2, err := NewTimecode(frameRate2, dropFrame2)
+	_, err = Parse(R30, "00:00:00,00")
 	assert.Nil(t, err)
-	tc2.AddSeconds(100)
-	assert.Equal(t, "00:01:40:00", tc2.String())
-	assert.Equal(t, 100.0, tc2.ToSeconds())
 
-	tc.Add(tc2)
-	assert.Equal(t, 11005.366666666667, tc.ToSeconds())
+	_, err = Parse(R30, "00;00;00;00")
+	assert.Nil(t, err)
+
+	_, err = Parse(R30, "00.00.00.00")
+	assert.Nil(t, err)
+
+	_, err = Parse(R30, "00,00,00,00")
+	assert.Nil(t, err)
+
+	_, err = Parse(R30, "00;00.00,00")
+	assert.Nil(t, err)
 }
 
-func TestSubTimecode(t *testing.T) {
-	t.Parallel()
-
-	frameRate := 30.0
-	dropFrame := false
-
-	tc, err := NewTimecode(frameRate, dropFrame)
+func TestAddTimecodes(t *testing.T) {
+	left, err := Parse(R30, "00:00:10:00")
 	assert.Nil(t, err)
-
-	err = tc.AddString("01:01:01:00")
+	right, err := Parse(R30, "00:00:50:00")
 	assert.Nil(t, err)
-	assert.Equal(t, "01:01:01:00", tc.String())
-	assert.Equal(t, 3661.0, tc.ToSeconds())
+	assert.Equal(t, "00:01:00:00", left.Add(right.Frames()).String())
 
-	tc.SubSeconds(90)
-	assert.Equal(t, "00:59:31:00", tc.String())
-	assert.Equal(t, 3571.0, tc.ToSeconds())
-
-	tc.SubSeconds(760)
-	assert.Equal(t, "00:46:51:00", tc.String())
-	assert.Equal(t, 2811.0, tc.ToSeconds())
-
-	tc.SubFrames(15)
-	assert.Equal(t, "00:46:50:15", tc.String())
-	assert.Equal(t, 2810.5, tc.ToSeconds())
-
-	tc.SubFrames(100)
-	assert.Equal(t, "00:46:47:05", tc.String())
-	assert.Equal(t, 2807.1666666666665, tc.ToSeconds())
-
-	err = tc.SubString("00:30:03:04")
+	left, err = Parse(R30, "00:00:10:00")
 	assert.Nil(t, err)
-	assert.Equal(t, "00:16:44:01", tc.String())
-	assert.Equal(t, 1004.0333333333333, tc.ToSeconds())
-
-	frameRate2 := 25.0
-	dropFrame2 := false
-	tc2, err := NewTimecode(frameRate2, dropFrame2)
+	right, err = Parse(R30, "00:00:55:00")
 	assert.Nil(t, err)
+	assert.Equal(t, "00:01:05:00", left.Add(right.Frames()).String())
 
-	tc.Sub(tc2)
-	assert.Equal(t, 1004.0333333333333, tc.ToSeconds())
+	left, err = Parse(R30, "59:59:59:29")
+	assert.Nil(t, err)
+	right, err = Parse(R30, "00:00:00:01")
+	assert.Nil(t, err)
+	assert.Equal(t, "60:00:00:00", left.Add(right.Frames()).String())
+
+	left, err = Parse(R30, "59:59:59:29")
+	assert.Nil(t, err)
+	right, err = Parse(R30, "00:10:00:01")
+	assert.Nil(t, err)
+	assert.Equal(t, "60:10:00:00", left.Add(right.Frames()).String())
+
 }
 
-func TestDropFrameTimecode(t *testing.T) {
-	t.Parallel()
-
-	frameRate := 29.97
-	dropFrame := true
-
-	tc, err := NewTimecode(frameRate, dropFrame)
+func TestSubTimecodes(t *testing.T) {
+	left, err := Parse(R30, "00:00:00:20")
 	assert.Nil(t, err)
-	assert.Equal(t, "00:00:00;00", tc.String())
-	assert.Equal(t, 0.0, tc.ToSeconds())
+	right, err := Parse(R30, "00:00:00:10")
+	assert.Nil(t, err)
+	result, err := left.Sub(right.Frames())
+	assert.Nil(t, err)
+	assert.Equal(t, "00:00:00:10", result.String())
 
-	tc.AddSeconds(90)
-	assert.Equal(t, "00:01:30;02", tc.String())
-	assert.Equal(t, 90.09009009009009, tc.ToSeconds())
+	left, err = Parse(R30, "00:00:00:10")
+	assert.Nil(t, err)
+	right, err = Parse(R30, "00:00:00:20")
+	assert.Nil(t, err)
+	_, err = left.Sub(right.Frames())
+	assert.NotNil(t, err)
+}
 
-	tc.SubSeconds(89)
-	assert.Equal(t, "00:00:01;00", tc.String())
-	assert.Equal(t, 1.001001001001001, tc.ToSeconds())
-
-	tc.SetDropFrame(false)
-	assert.Equal(t, "00:00:01:00", tc.String())
-	assert.Equal(t, 1.001001001001001, tc.ToSeconds())
-
-	tc.SetDropFrame(true)
-	assert.Equal(t, "00:00:01;00", tc.String())
-	assert.Equal(t, 1.001001001001001, tc.ToSeconds())
+func TestRate(t *testing.T) {
+	tc, err := Parse(R30, "00:00:00:20")
+	assert.Nil(t, err)
+	rate := tc.Rate()
+	assert.Equal(t, 30.0, rate.FPS())
 }
