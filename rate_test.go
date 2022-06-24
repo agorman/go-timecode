@@ -78,7 +78,7 @@ func TestParseRate(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, 30.0, rate.FPS())
 
-	_, err = ParseRate("1/2", false)
+	_, err = ParseRate("30/0", false)
 	assert.NotNil(t, err)
 
 	_, err = ParseRate("invalid", false)

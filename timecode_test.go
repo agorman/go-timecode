@@ -19,6 +19,16 @@ func TestParse(t *testing.T) {
 	assert.Equal(t, uint64(10), tc.Second())
 	assert.Equal(t, uint64(0), tc.Frame())
 
+	tc, err = Parse(R2997DF, "00:00:00:01")
+	assert.Nil(t, err)
+	assert.Equal(t, "00:00:00;01", tc.String())
+	assert.Equal(t, uint64(1), tc.Frames())
+	assert.Equal(t, 0.03333333333333333, tc.Seconds())
+	assert.Equal(t, uint64(0), tc.Hour())
+	assert.Equal(t, uint64(0), tc.Minute())
+	assert.Equal(t, uint64(0), tc.Second())
+	assert.Equal(t, uint64(1), tc.Frame())
+
 	tc, err = Parse(R30, "123:00:10:00")
 	assert.Nil(t, err)
 	assert.Equal(t, "123:00:10:00", tc.String())
