@@ -17,7 +17,7 @@ go get github.com/agorman/go-timecode/v2
 
 ## Documentation
 
-https://godoc.org/github.com/agorman/go-timecode
+https://godoc.org/github.com/agorman/go-timecode/v2
 
 ## Basic usage
 
