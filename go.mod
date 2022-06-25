@@ -1,4 +1,4 @@
-module github.com/agorman/go-timecode
+module github.com/agorman/go-timecode/v2
 
 go 1.16
 
