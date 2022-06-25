@@ -1,6 +1,6 @@
 [![Build Status](https://github.com/agorman/go-timecode/workflows/go-timecode-ci/badge.svg)](https://github.com/agorman/go-timecode/actions)
 [![go report card](https://goreportcard.com/badge/github.com/agorman/go-timecode "go report card")](https://goreportcard.com/report/github.com/agorman/go-timecode)
-[![GoDoc](https://godoc.org/github.com/agorman/go-timecode?status.svg)](https://godoc.org/github.com/agorman/go-timecode)
+[![GoDoc](https://godoc.org/github.com/agorman/go-timecode/v2?status.svg)](https://godoc.org/github.com/agorman/go-timecode/v2)
 [![codecov](https://codecov.io/gh/agorman/go-timecode/branch/master/graph/badge.svg)](https://codecov.io/gh/agorman/go-timecode)
 
 # go-timecode
